@@ -1,0 +1,14 @@
+version: "3.7"
+
+services: 
+  chatgpt-wecom:
+    build:
+      context: ./
+      dockerfile: docker/callback.Dockerfile
+    ports: 
+      - 8000:8000
+    container_name: chatgpt-wecom
+    volumes: 
+      - ./logs:/home/works/program/logs
+      - ./conf/online.conf:/home/works/program/conf/online.conf
+    restart: always
