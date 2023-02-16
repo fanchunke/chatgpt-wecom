@@ -16,8 +16,8 @@ import (
 )
 
 func main() {
-	conf := flag.String("conf", "conf/online.conf", "配置文件")
-	initEnt := flag.Bool("init-ent", false, "是否初始化数据库")
+	conf := flag.String("conf", "chatgpt.conf", "配置文件")
+	initEnt := flag.Bool("initdb", false, "是否初始化数据库")
 	flag.Parse()
 	cfg, err := config.New(*conf)
 	if err != nil {
@@ -51,7 +51,7 @@ func migrate(cfg *config.Config) error {
 	defer client.Close()
 
 	if err := client.Schema.Create(context.Background()); err != nil {
-		fmt.Println(err)
+		log.Error().Err(err).Msg("Create Schema failed!")
 		return err
 	}
 	return nil

@@ -1,7 +1,7 @@
 # Step 1: Modules caching
 FROM golang:1.18 AS base
 
-ENV GOPROXY=https://goproxy.cn
+# ENV GOPROXY=https://goproxy.cn
 
 # Move to working directory /build
 WORKDIR /build
@@ -18,13 +18,13 @@ ENV GO111MODULE=on \
 COPY --from=base /go/pkg /go/pkg
 COPY . /app
 WORKDIR /app
-RUN go build -o /bin/app ./cmd/app
+RUN go build -o /bin/chatgpt-wecom ./cmd/app
 
 # Step 3: Final
 FROM alpine:latest
 WORKDIR /home/works/program
-COPY ./conf/online.conf ./conf/online.conf
-COPY --from=builder /bin/app .
+COPY ./conf/chatgpt.conf ./chatgpt.conf
+COPY --from=builder /bin/chatgpt-wecom .
 
 EXPOSE 8000
-ENTRYPOINT ["./app"]
+CMD ["./chatgpt-wecom"]
