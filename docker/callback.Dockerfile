@@ -1,5 +1,5 @@
 # Step 1: Modules caching
-FROM golang:1.18 AS base
+FROM golang:1.19 AS base
 
 # ENV GOPROXY=https://goproxy.cn
 
