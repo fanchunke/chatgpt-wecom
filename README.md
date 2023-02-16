@@ -4,11 +4,15 @@
 
 相较于官方提供的 `CreateCompletion` 接口，该项目增加了会话管理功能，能够较好地提供多轮对话能力。
 
-## 快速开始
+## 快速安装
 
-1. 修改配置
+### 0. 前置步骤
+* 登录企业微信的[管理后台](https://work.weixin.qq.com/wework_admin/loginpage_wx)创建机器人，名字随意取
+  * 点击【应用管理】-【创建应用】，填写完毕保存。
 
-修改 `conf/online.conf` 文件，主要涉及企业微信应用配置、GPT3 API Key、会话管理数据库配置等。
+### 1. 配置
+
+修改 `conf/chatgpt.conf` 文件，主要涉及企业微信应用配置、GPT3 API Key、会话管理数据库配置等。
 
 - 企业微信应用配置
   - corp_id：在企业微信后台【我的企业】-【企业信息】处获取【企业ID】
@@ -16,27 +20,29 @@
   - agent_id：在企业微信后台【应用管理】处获取【AgentId】
   - encoding_aes_key：企业微信后台 【接收消息】- 【API 接收消息】获取【EncodingAESKey】，可以随机生成
   - token：企业微信后台 【接收消息】- 【API 接收消息】获取【Token】，可以随机生成
-- Open AI Key
+- OpenAI Key
   - 需要自行申请
-- 数据库
-  - 数据库需要自行创建，数据表的创建可以通过命令行方式执行。
 
-2. `Docker` 运行
-
-```shell
-docker-compose up -d
-```
-
-3. 初始化数据表
+### 2. 运行
+* **选择1：Docker运行（推荐）**
 
 ```shell
-# 进入容器
-docker exec -it chatgpt-wecom sh
-
-# 执行命令
-./app -conf=conf/online.conf -init-ent
+docker compose up -d
 ```
 
-4. 配置企业微信应用。在企业微信后台 【接收消息】- 【API 接收消息】配置接收消息服务器配置。
+启动完毕，执行 `docker compose ps` 确认程序存活即可。进入步骤3 。
 
-- URL 配置格式：`http[s]://ip:port/wecom/receive`
+* 选择2：本地运行（需要手动配置MySQL）
+  * [点击下载安装包](https://github.com/yijia2413/chatgpt-wecom/releases) 和 [配置文件](https://github.com/yijia2413/chatgpt-wecom/releases/download/v0.1.0/chatgpt.conf)
+  * 修改`chatgpt.conf`, mysql 相关的配置
+  * 执行 `./chatgpt-wecom -conf=chatgpt.conf -initdb`
+  * 然后执行 `./chatgpt-wecom -conf=chatgpt.conf`
+```
+### 3. 配置企业微信
+配置企业微信应用。在企业微信后台 【接收消息】- 【API 接收消息】配置接收消息服务器配置。
+
+* URL 配置格式：`http://ip:port/wecom/receive`
+* 在企业微信后台，添加可信IP地址
+
+### 聊天
+![img](/png/example.jpg)
