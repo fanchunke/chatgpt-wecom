@@ -8,7 +8,26 @@ services:
     ports: 
       - 8000:8000
     container_name: chatgpt-wecom
+    depends_on:
+      [chatgpt-db]
     volumes: 
       - ./logs:/home/works/program/logs
-      - ./conf/online.conf:/home/works/program/conf/online.conf
+      - ./conf/chatgpt.conf:/home/works/program/chatgpt.conf
     restart: always
+  
+  chatgpt-db:
+    image: mysql:5.7
+    container_name: chatgpt-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'chatgpt'   
+      MYSQL_ROOT_PASSWORD: 'VOSE1@qblt6'
+      MYSQL_ROOT_HOST: '%'
+    expose:
+      - '3306'
+    volumes:
+      - db:/var/lib/mysql'
+      #- './initial.sql:/docker-entrypoint-initdb.d/initial.sql'
+
+volumes:
+  db: {}   
