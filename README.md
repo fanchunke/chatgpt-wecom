@@ -39,7 +39,6 @@ docker compose up -d
   * 修改`chatgpt.conf`, mysql 相关的配置
   * 执行 `./chatgpt-wecom -conf=chatgpt.conf -initdb`
   * 然后执行 `./chatgpt-wecom -conf=chatgpt.conf`
-```
 
 ### 3. 配置企业微信
 配置企业微信应用。在企业微信后台 【接收消息】- 【API 接收消息】配置接收消息服务器配置。
