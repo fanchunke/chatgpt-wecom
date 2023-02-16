@@ -12,7 +12,8 @@ import (
 	"github.com/rs/zerolog/log"
 
 	_ "github.com/go-sql-driver/mysql"
-	_ "go.uber.org/automaxprocs"
+	// _ "go.uber.org/automaxprocs"
+	_ "github.com/emadolsky/automaxprocs/maxprocs"
 )
 
 func main() {
