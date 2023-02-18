@@ -7,12 +7,13 @@ import (
 )
 
 type Config struct {
-	App      `mapstructure:"app"`
-	HTTP     `mapstructure:"http"`
-	Logger   `mapstructure:"logger"`
-	WeCom    `mapstructure:"wecom"`
-	GPT      `mapstructure:"gpt"`
-	Database `mapstructure:"database"`
+	App          `mapstructure:"app"`
+	HTTP         `mapstructure:"http"`
+	Logger       `mapstructure:"logger"`
+	WeCom        `mapstructure:"wecom"`
+	GPT          `mapstructure:"gpt"`
+	Database     `mapstructure:"database"`
+	Conversation `mapstructure:"conversation"`
 }
 
 type App struct {
@@ -45,12 +46,15 @@ type WeCom struct {
 }
 
 type Database struct {
-	Dialect  string `mapstructure:"dialect"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	DBName   string `mapstructure:"dbname"`
+	Driver     string `mapstructure:"driver"`
+	DataSource string `mapstructure:"dataSource"`
+}
+
+type Conversation struct {
+	CloseSessionFlag  string `mapstructure:"closeSessionFlag"`
+	CloseSessionReply string `mapstructure:"closeSessionReply"`
+	EnableEnterEvent  bool   `mapstructure:"enableEnterEvent"`
+	EnterEventReply   string `mapstructure:"enterEventReply"`
 }
 
 func New(path string) (*Config, error) {
