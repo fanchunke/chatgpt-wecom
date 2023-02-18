@@ -1,5 +1,6 @@
 version: "3.7"
 
+# only works for linux amd64
 services: 
   chatgpt-wecom:
     build:
@@ -27,7 +28,7 @@ services:
       - '3306'
     volumes:
       - db:/var/lib/mysql'
-      #- './initial.sql:/docker-entrypoint-initdb.d/initial.sql'
+      - './init.sql:/docker-entrypoint-initdb.d/init.sql'
 
 volumes:
   db: {}   

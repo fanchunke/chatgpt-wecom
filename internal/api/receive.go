@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	config "github.com/fanchunke/chatgpt-wecom/conf"
 	"github.com/fanchunke/chatgpt-wecom/pkg/wecom"
 	"github.com/fanchunke/chatgpt-wecom/pkg/wecom/message"
 	"github.com/fanchunke/xgpt3"
@@ -14,49 +15,63 @@ import (
 )
 
 type callbackHandler struct {
+	cfg         *config.Config
 	xgpt3Client *xgpt3.Client
 	wecomClient *wecom.WeComApp
 }
 
-func NewCallbackHandler(xgpt3Client *xgpt3.Client, wecomClient *wecom.WeComApp) *callbackHandler {
+func NewCallbackHandler(cfg *config.Config, xgpt3Client *xgpt3.Client, wecomClient *wecom.WeComApp) *callbackHandler {
 	return &callbackHandler{
+		cfg:         cfg,
 		xgpt3Client: xgpt3Client,
 		wecomClient: wecomClient,
 	}
 }
 
 func (h *callbackHandler) OnIncomingMessage(ctx context.Context, msg *message.RxMessage) error {
-	agentId, content, err := h.convertMessage(ctx, msg)
-	if err != nil {
-		log.Ctx(ctx).Error().Err(err).Msgf("Convert wecom msg error: %v", err)
-		return err
+	var reply string
+	var err error
+	if msg.Text != nil {
+		// 判断是否需要重启会话
+		content := msg.Text.Content
+		closeSession := h.cfg.Conversation.CloseSessionFlag == content
+
+		// 获取回复
+		if !closeSession {
+			reply, err = h.getGPTResponse(context.Background(), msg.AgentId, msg.FromUserName, content)
+			if err != nil {
+				log.Error().Err(err).Msgf("Get GPT Response error: %v", err)
+				return err
+			}
+		} else {
+			if err := h.xgpt3Client.CloseConversation(context.Background(), msg.FromUserName); err != nil {
+				log.Error().Err(err).Msgf("Close Conversation error: %v", err)
+				return err
+			}
+			reply = h.cfg.Conversation.CloseSessionReply
+		}
+	} else if msg.EnterAgentEvent != nil {
+		if h.cfg.Conversation.EnableEnterEvent {
+			reply = h.cfg.Conversation.EnterEventReply
+		}
+	} else {
+		return fmt.Errorf("UnSupported MsgType: %v", msg.MsgType)
 	}
 
-	go func() {
-		defer func() {
-			if err := recover(); err != nil {
-				log.Error().Msgf("recovery from: %v", err)
-			}
-		}()
-
-		if err := h.getAndSendGPTResponse(context.Background(), agentId, msg.FromUserName, content); err != nil {
-			log.Error().Err(err).Msgf("Get GPT Response error: %v", err)
-		}
-	}()
+	// 发送回复
+	if reply == "" {
+		log.Debug().Msg("Reply is empty")
+		return nil
+	}
+	if err := h.sendTextMessage(context.Background(), msg.AgentId, msg.FromUserName, reply); err != nil {
+		log.Error().Err(err).Msgf("Send Wecom Response error: %v", err)
+		return err
+	}
 
 	return nil
 }
 
-func (h *callbackHandler) convertMessage(ctx context.Context, msg *message.RxMessage) (int64, string, error) {
-	// 文本消息
-	if msg.Text != nil {
-		return msg.Text.AgentId, msg.Text.Content, nil
-	}
-
-	return 0, "", fmt.Errorf("UnSupported MsgType: %v", msg.MsgType)
-}
-
-func (h *callbackHandler) getAndSendGPTResponse(ctx context.Context, agentId int64, userId, content string) error {
+func (h *callbackHandler) getGPTResponse(ctx context.Context, agentId int64, userId, content string) (string, error) {
 	// 获取 GPT 回复
 	req := gogpt.CompletionRequest{
 		Model:           gogpt.GPT3TextDavinci003,
@@ -69,19 +84,23 @@ func (h *callbackHandler) getAndSendGPTResponse(ctx context.Context, agentId int
 	}
 	resp, err := h.xgpt3Client.CreateConversationCompletionWithChannel(ctx, req, fmt.Sprintf("%d", agentId))
 	if err != nil {
-		return fmt.Errorf("CreateCompletion failed: %w", err)
+		return "", fmt.Errorf("CreateCompletion failed: %w", err)
 	}
 
 	if len(resp.Choices) == 0 {
-		return fmt.Errorf("Empty GPT Choices")
+		return "", fmt.Errorf("Empty GPT Choices")
 	}
 
 	// 发送回复给用户
 	reply := strings.TrimSpace(resp.Choices[0].Text)
-	log.Info().Msgf("Start Send GPT Response: %s", string(reply))
-	_, err = h.wecomClient.SendTextMessage(ctx, message.TxTextMessage{
+	return reply, nil
+}
+
+func (h *callbackHandler) sendTextMessage(ctx context.Context, agentId int64, userId, content string) error {
+	log.Info().Msgf("[AgentId: %d] [UserId: %s] Start Send Wecom Response: %s", agentId, userId, string(content))
+	_, err := h.wecomClient.SendTextMessage(ctx, message.TxTextMessage{
 		Text: message.Text{
-			Content: reply,
+			Content: content,
 		},
 		TxMessageMetadata: message.TxMessageMetadata{
 			ToUser:  userId,
@@ -91,7 +110,7 @@ func (h *callbackHandler) getAndSendGPTResponse(ctx context.Context, agentId int
 	})
 
 	if err != nil {
-		return fmt.Errorf("Send Lark Message failed: %w", err)
+		return fmt.Errorf("Send Wecom Message failed: %w", err)
 	}
 
 	return nil

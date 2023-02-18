@@ -6,7 +6,7 @@ type RxEventMetadata struct {
 	CreateTime   int64  `xml:"CreateTime"`
 	MsgType      string `xml:"MsgType"`
 	Event        string `xml:"Event"`
-	AgentId      string `xml:"AgentID"`
+	AgentId      int64  `xml:"AgentID"`
 }
 
 func (m *RxEventMetadata) kind() string {
