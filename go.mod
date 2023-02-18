@@ -3,11 +3,12 @@ module github.com/fanchunke/chatgpt-wecom
 go 1.18
 
 require (
-	github.com/fanchunke/xgpt3 v0.1.0
+	github.com/fanchunke/xgpt3 v0.1.2
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.7.0
+	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/rs/xid v1.4.0
 	github.com/rs/zerolog v1.28.0
 	github.com/sashabaranov/go-gpt3 v1.0.0

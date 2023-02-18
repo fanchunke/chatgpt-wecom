@@ -56,6 +56,7 @@ type messageKind interface {
 
 // RxMessage: 接收到的消息
 type RxMessage struct {
+	AgentId      int64       `xml:"AgentID"`
 	FromUserName string      `xml:"FromUserName"`
 	CreateTime   int64       `xml:"CreateTime"`
 	MsgId        uint64      `xml:"MsgId"`

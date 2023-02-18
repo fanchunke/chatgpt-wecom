@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -27,11 +26,15 @@ func Run(cfg *config.Config) {
 
 	// 初始化数据库 client
 	dbConf := cfg.Database
-	s := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=True", dbConf.User, dbConf.Password, dbConf.Host, dbConf.Port, dbConf.DBName)
-	chatentClient, err := chatent.Open(dbConf.Dialect, s)
+	chatentClient, err := chatent.Open(dbConf.Driver, dbConf.DataSource)
 	if err != nil {
 		log.Fatal().Err(err).Msg("ent - open database failed")
 	}
+
+	if err := Migrate(cfg); err != nil {
+		log.Fatal().Err(err).Msg("ent - database migrate failed")
+	}
+	log.Info().Msg("数据库迁移成功")
 
 	// 初始化 xgpt3 client
 	xgpt3Client := xgpt3.NewClient(gptClient, ent.New(chatentClient))
