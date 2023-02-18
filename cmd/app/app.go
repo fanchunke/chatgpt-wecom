@@ -1,19 +1,15 @@
 package main
 
 import (
-	"context"
 	"flag"
-	"fmt"
 
 	config "github.com/fanchunke/chatgpt-wecom/conf"
 	"github.com/fanchunke/chatgpt-wecom/internal/app"
 	"github.com/fanchunke/chatgpt-wecom/pkg/logger"
-	"github.com/fanchunke/xgpt3/conversation/ent/chatent"
 	"github.com/rs/zerolog/log"
 
 	_ "github.com/go-sql-driver/mysql"
-	// _ "go.uber.org/automaxprocs"
-	_ "github.com/emadolsky/automaxprocs/maxprocs"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
@@ -31,29 +27,15 @@ func main() {
 		Filename:              cfg.Logger.Filename,
 	})
 
+	log.Debug().Msg("读取配置正常")
+
 	// 数据库迁移
 	if *initEnt {
-		if err := migrate(cfg); err != nil {
+		if err := app.Migrate(cfg); err != nil {
 			log.Fatal().Err(err).Msg("failed creating schema resources")
 		}
 		return
 	}
 
 	app.Run(cfg)
-}
-
-func migrate(cfg *config.Config) error {
-	dbConf := cfg.Database
-	s := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=True", dbConf.User, dbConf.Password, dbConf.Host, dbConf.Port, dbConf.DBName)
-	client, err := chatent.Open(dbConf.Dialect, s)
-	if err != nil {
-		return err
-	}
-	defer client.Close()
-
-	if err := client.Schema.Create(context.Background()); err != nil {
-		log.Error().Err(err).Msg("Create Schema failed!")
-		return err
-	}
-	return nil
 }

@@ -12,13 +12,13 @@ RUN go mod download
 FROM golang:1.18 as builder
 
 ENV GO111MODULE=on \
-    CGO_ENABLED=0 \
+    CGO_ENABLED=1 \
     GOOS=linux \
     GOARCH=amd64
 COPY --from=base /go/pkg /go/pkg
 COPY . /app
 WORKDIR /app
-RUN go build -o /bin/chatgpt-wecom ./cmd/app
+RUN go build -ldflags '-linkmode external -extldflags "-static"' -o /bin/app ./cmd/app
 
 # Step 3: Final
 FROM alpine:latest

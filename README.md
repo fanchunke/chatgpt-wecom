@@ -22,6 +22,10 @@
   - token：企业微信后台 【接收消息】- 【API 接收消息】获取【Token】，可以随机生成
 - OpenAI Key
   - 需要自行申请
+- 数据库
+  - ~数据库需要自行创建，数据表的创建可以通过命令行方式执行。~
+  - 数据库支持 sqlite3，可以通过修改配置使用。如果使用 MySQL，需要自行创建数据库。
+  - **数据表在程序启动时自动创建。**
 
 ### 2. 运行
 * **选择1：Docker运行（推荐）**
@@ -31,21 +35,62 @@ git clone https://github.com/yijia2413/chatgpt-wecom.git
 cd chatgpt-wecom
 docker compose up -d
 ```
-
-启动完毕，执行 `docker compose ps` 确认程序存活即可。进入步骤3 。
-
-* **选择2：本地运行（需要手动配置MySQL）**
-  * [点击下载安装包](https://github.com/yijia2413/chatgpt-wecom/releases) 和 [配置文件](https://github.com/yijia2413/chatgpt-wecom/releases/download/v0.1.0/chatgpt.conf)
-  * 修改`chatgpt.conf`, mysql 相关的配置
-  * 执行 `./chatgpt-wecom -conf=chatgpt.conf -initdb`
-  * 然后执行 `./chatgpt-wecom -conf=chatgpt.conf`
+程序启动会自动创建MySQL数据库和对应的表结构。
 
 ### 3. 配置企业微信
-配置企业微信应用。在企业微信后台 【接收消息】- 【API 接收消息】配置接收消息服务器配置。
 
 * URL 配置格式：`http://ip:port/wecom/receive`
 * 在企业微信后台，添加可信IP地址
 
+## FAQ
 
-### 开启聊天
+**怎么创建数据库**
+
+- v0.1.1 版本中支持 sqlite3 数据库，只需要修改配置文件的配置，程序启动后便会初始化数据库和数据表，不需要额外的操作。
+
+- 如果使用的是 MySQL，则需要自行创建数据库，建库 SQL 可以参考下面的命令：[init.sql](/init.sql)
+
+
+**数据库连接失败**
+
+- 首先检查数据库配置是否正确
+- 如果使用 docker 部署服务，需要确认容器内能否连接到数据库。最常见的一个问题是，在宿主机部署了 MySQL，但是在容器内配置 `127.0.0.1`，这种情况需要配置宿主机的 IP
+
+**数据库配置说明**
+
+v0.1.1 版本可以支持 MySQL、SQLite、PostgreSQL。常见的配置如下：
+
+MySQL:
+
+```toml
+[database]
+# mysql
+driver="mysql"
+dataSource="root:12345678@tcp(127.0.0.1:3306)/chatgpt?parseTime=True"
+```
+
+SQLite
+
+```toml
+[database]
+# sqlite3
+driver="sqlite3"
+dataSource="file:chatgpt?_fk=1&parseTime=True"
+```
+
+## Changelog
+
+### v0.1.1
+
+- 修复 prompt 过长导致接口调用失败问题
+- 支持 sqlite3
+- 自动初始化数据库
+- 支持企业微信进入事件，可以配置进入事件回复语。需要先在企业微信上配置【上报进入应用事件】
+- 支持关闭会话功能
+
+### v0.1.0
+
+- 项目初始化
+
+### Happy Chatting
 ![img](/png/example.jpg)
