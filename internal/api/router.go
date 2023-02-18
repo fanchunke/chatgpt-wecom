@@ -32,7 +32,7 @@ func NewRouter(cfg *config.Config, xgpt3Client *xgpt3.Client, wecomApp *wecom.We
 	r.Use(middleware.AccessHandler())
 	r.GET("/healthz", r.Healthz)
 
-	callback := NewCallbackHandler(xgpt3Client, wecomApp)
+	callback := NewCallbackHandler(cfg, xgpt3Client, wecomApp)
 	msgHandler, err := wecomApp.RxMessageHandler(callback)
 	if err != nil {
 		log.Error().Err(err).Msgf("Init RxMessageHandler failed: %s", err)
