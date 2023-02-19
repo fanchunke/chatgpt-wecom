@@ -33,9 +33,16 @@
 ```shell
 git clone https://github.com/yijia2413/chatgpt-wecom.git
 cd chatgpt-wecom
-docker compose up -d
+# 构建镜像
+make dockerenv
+# 运行带sqlite的镜像，运行前确认chatgpt.conf修改完毕
+docker run -it -d --name chatgpt --restart=always \
+  -v $(pwd)/conf/chatgpt.conf:/home/works/program/chatgpt.conf chatgpt-wecom:0.1.1
 ```
-程序启动会自动创建MySQL数据库和对应的表结构。
+
+* **选择2：本地运行**
+* 下载对应的二进制，[chatgpt-wecom](https://github.com/yijia2413/chatgpt-wecom/releases)
+* 执行命令 `./chatgpt-wecom -conf=conf/chatgpt.conf` 即可，同理需要确认`chatgpt.conf`配置完毕
 
 ### 3. 配置企业微信
 
