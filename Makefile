@@ -6,6 +6,9 @@ BINARY_NAME=chatgpt-wecom
 
 all: amd64 arm64 win64 mac
 
+dockerenv:
+	 docker build -t ${BINARY_NAME}:${VERSION} -f $(shell pwd)/docker/callback.Dockerfile .
+
 mac:
 	GOOS=darwin GOARCH=amd64 $(GOBUILD) -ldflags "-s -w " -o $(BINARY_NAME).$(VERSION).amd64-darwin ./cmd/app
 
