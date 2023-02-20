@@ -3,7 +3,7 @@ module github.com/fanchunke/chatgpt-wecom
 go 1.18
 
 require (
-	github.com/fanchunke/xgpt3 v0.1.2
+	github.com/fanchunke/xgpt3 v0.1.3
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-resty/resty/v2 v2.7.0
@@ -13,7 +13,6 @@ require (
 	github.com/rs/zerolog v1.28.0
 	github.com/sashabaranov/go-gpt3 v1.0.0
 	github.com/spf13/viper v1.14.0
-	go.uber.org/automaxprocs v1.5.1
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
