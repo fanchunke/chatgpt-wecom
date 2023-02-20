@@ -67,7 +67,7 @@ MySQL:
 [database]
 # mysql
 driver="mysql"
-dataSource="root:12345678@tcp(127.0.0.1:3306)/chatgpt?parseTime=True"
+dataSource="root:12345678@tcp(127.0.0.1:3306)/chatgpt?parseTime=True&loc=Local"
 ```
 
 SQLite
@@ -76,11 +76,12 @@ SQLite
 [database]
 # sqlite3
 driver="sqlite3"
-dataSource="file:chatgpt?_fk=1&parseTime=True"
+dataSource="file:chatgpt?_fk=1&parseTime=True&loc=Local"
 ```
 
-
-
+`dataSource` 字段有两个参数需要配置：
+- parseTime=True
+- loc=Local: 以本地时间存储时间类型的字段
 
 ## Changelog
 
