@@ -22,13 +22,12 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: 'chatgpt'   
-      MYSQL_ROOT_PASSWORD: 'VOSE1@qblt6'
+      MYSQL_ROOT_PASSWORD: '12345678'
       MYSQL_ROOT_HOST: '%'
     expose:
       - '3306'
     volumes:
       - db:/var/lib/mysql'
-      - './init.sql:/docker-entrypoint-initdb.d/init.sql'
 
 volumes:
   db: {}   

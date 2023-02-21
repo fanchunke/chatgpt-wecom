@@ -28,19 +28,28 @@
   - **数据表在程序启动时自动创建。**
 
 ### 2. 运行
-* **选择1：Docker运行（推荐）**
+* **选择1：Docker运行（sqlite3版，推荐）**
 
 ```shell
 git clone https://github.com/yijia2413/chatgpt-wecom.git
 cd chatgpt-wecom
+
 # 构建镜像
 make dockerenv
+
 # 运行带sqlite的镜像，运行前确认chatgpt.conf修改完毕
 docker run -it -d --name chatgpt --restart=always \
-  -v $(pwd)/conf/chatgpt.conf:/home/works/program/chatgpt.conf chatgpt-wecom:0.1.1
+  -v $(pwd)/conf/chatgpt.conf:/home/works/program/chatgpt.conf \
+  -p 0.0.0.0:8000:8000 chatgpt-wecom:0.1.1
 ```
 
-* **选择2：本地运行**
+* **选择2：Docker运行（MySQL版）**
+```shell
+# 运行前确认chatgpt.conf修改完毕
+docker compose up -d
+```
+
+* **选择3：本地运行**
 * 下载对应的二进制，[chatgpt-wecom](https://github.com/yijia2413/chatgpt-wecom/releases)
 * 执行命令 `./chatgpt-wecom -conf=conf/chatgpt.conf` 即可，同理需要确认`chatgpt.conf`配置完毕
 
@@ -55,7 +64,7 @@ docker run -it -d --name chatgpt --restart=always \
 
 - v0.1.1 版本中支持 sqlite3 数据库，只需要修改配置文件的配置，程序启动后便会初始化数据库和数据表，不需要额外的操作。
 
-- 如果使用的是 MySQL，则需要自行创建数据库，建库 SQL 可以参考下面的命令：[init.sql](/init.sql)
+- 如果使用的是 MySQL，则需要自行创建数据库，建库 SQL 可直接使用命令：[init.sql](/init.sql)，之后程序启动，便可以自动创建数据表。
 
 
 **数据库连接失败**
@@ -73,7 +82,7 @@ MySQL:
 [database]
 # mysql
 driver="mysql"
-dataSource="root:12345678@tcp(127.0.0.1:3306)/chatgpt?parseTime=True"
+dataSource="root:12345678@tcp(127.0.0.1:3306)/chatgpt?parseTime=True&loc=Local"
 ```
 
 SQLite
@@ -82,8 +91,12 @@ SQLite
 [database]
 # sqlite3
 driver="sqlite3"
-dataSource="file:chatgpt?_fk=1&parseTime=True"
+dataSource="file:chatgpt?_fk=1&parseTime=True&loc=Local"
 ```
+
+`dataSource` 字段有两个参数需要配置：
+- parseTime=True
+- loc=Local: 以本地时间存储时间类型的字段
 
 ## Changelog
 
