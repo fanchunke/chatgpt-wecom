@@ -3,7 +3,7 @@ module github.com/fanchunke/chatgpt-wecom
 go 1.19
 
 require (
-	github.com/fanchunke/xgpt3 v0.1.2
+	github.com/fanchunke/xgpt3 v0.1.3
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-resty/resty/v2 v2.7.0
