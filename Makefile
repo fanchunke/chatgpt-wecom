@@ -4,18 +4,21 @@ GOCLEAN=$(GOCMD) clean
 VERSION=0.1.1
 BINARY_NAME=chatgpt-wecom
 
-all: amd64 arm64 win64 mac
+all: mac-amd64 mac-arm64 linux-amd64 linux-arm64 win64
 
 dockerenv:
 	 docker build -t ${BINARY_NAME}:${VERSION} -f $(shell pwd)/docker/callback.Dockerfile .
 
-mac:
+mac-amd64:
 	GOOS=darwin GOARCH=amd64 $(GOBUILD) -ldflags "-s -w " -o $(BINARY_NAME).$(VERSION).amd64-darwin ./cmd/app
 
-amd64:
+mac-arm64:
+	GOOS=darwin GOARCH=arm64 $(GOBUILD) -ldflags "-s -w " -o $(BINARY_NAME).$(VERSION).arm64-darwin ./cmd/app
+
+linux-amd64:
 	GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags "-s -w " -o $(BINARY_NAME).$(VERSION).amd64-linux ./cmd/app
 
-arm64:
+linux-arm64:
 	GOOS=linux GOARCH=arm64 $(GOBUILD) -ldflags "-s -w " -o $(BINARY_NAME).$(VERSION).arm64-linux ./cmd/app
 
 win64:
@@ -23,4 +26,4 @@ win64:
 
 clean:
 	$(GOCLEAN)
-	rm -f $(BINARY_NAME).$(VERSION).amd64-linux $(BINARY_NAME).$(VERSION).amd64-darwin $(BINARY_NAME).$(VERSION).arm64-linux $(BINARY_NAME).$(VERSION).exe
+	rm -f $(BINARY_NAME).$(VERSION).amd64-linux $(BINARY_NAME).$(VERSION).amd64-darwin $(BINARY_NAME).$(VERSION).arm64-darwin $(BINARY_NAME).$(VERSION).arm64-linux $(BINARY_NAME).$(VERSION).exe
