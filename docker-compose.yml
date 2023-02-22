@@ -1,5 +1,6 @@
 version: "3.7"
 
+# only works for linux amd64
 services: 
   chatgpt-wecom:
     build:
@@ -8,7 +9,25 @@ services:
     ports: 
       - 8000:8000
     container_name: chatgpt-wecom
+    depends_on:
+      [chatgpt-db]
     volumes: 
       - ./logs:/home/works/program/logs
-      - ./conf/online.conf:/home/works/program/conf/online.conf
+      - ./conf/chatgpt.conf:/home/works/program/chatgpt.conf
     restart: always
+  
+  chatgpt-db:
+    image: mysql:5.7
+    container_name: chatgpt-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'chatgpt'   
+      MYSQL_ROOT_PASSWORD: '12345678'
+      MYSQL_ROOT_HOST: '%'
+    expose:
+      - '3306'
+    volumes:
+      - db:/var/lib/mysql'
+
+volumes:
+  db: {}   
