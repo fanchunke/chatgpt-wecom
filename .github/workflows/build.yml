@@ -27,12 +27,12 @@ jobs:
       run: go build -ldflags "-s -w " -o app ./cmd/app
 
     - name: Run
-      run: |
-        if ["$RUNNER_OS" == "Windows" ]; then
-          Start-Process -FilePath "app"
-        else
-          ./app &
-        fi
+      if: matrix.os != "windows-latest"
+      run: ./app &
+
+    - name: Run
+      if: matrix.os == "windows-latest"
+      run: Start-Process -FilePath "app"
 
     - name: Test
       run: |
