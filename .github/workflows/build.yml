@@ -27,7 +27,11 @@ jobs:
       run: go build -ldflags "-s -w " -o app ./cmd/app
 
     - name: Run
-      run: ./app &
+      run: |
+        if ["$RUNNER_OS" == "Windows" ]; then
+          Start-Process -FilePath "app"
+        else
+          ./app &
 
     - name: Test
       run: |
