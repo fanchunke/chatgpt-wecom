@@ -26,9 +26,8 @@ jobs:
     - name: Build
       run: go build -ldflags "-s -w " -o app ./cmd/app
 
+    - name: Run
+      run: ./app &
+
     - name: Test
-      run: |
-        ./app &
-        sleep 10
-        curl -i http://127.0.0.1:8000/healthz
-        kill -9 `lsof -i :8000 -t`
+      run: curl -i http://127.0.0.1:8000/healthz
