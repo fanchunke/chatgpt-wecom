@@ -29,5 +29,4 @@ jobs:
     - name: Test
       env:
         encoding_aes_key: FBpEcN6OFOmpCToGVZfTZvDLqk1m60O5flEUotOS2GP
-        ENCODING_AES_KEY: FBpEcN6OFOmpCToGVZfTZvDLqk1m60O5flEUotOS2GP
       run: ./chatgpt-wecom
