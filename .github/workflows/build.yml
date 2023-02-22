@@ -32,6 +32,7 @@ jobs:
           Start-Process -FilePath "app"
         else
           ./app &
+        fi
 
     - name: Test
       run: |
