@@ -38,5 +38,7 @@ jobs:
       run: |
         netsh advfirewall set allprofiles state off
         Start-Process -FilePath ./app
+        netstat -aon
+        tasklist
         sleep 10
         curl -i http://localhost:8000/healthz
