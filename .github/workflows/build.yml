@@ -36,6 +36,7 @@ jobs:
     - name: Run on windows
       if: startsWith(matrix.os, 'windows')
       run: |
-        Start-Job -ScriptBlock {./app}
+        netsh advfirewall set allprofiles state off
+        Start-Process -FilePath ./app
         sleep 10
         curl -i http://localhost:8000/healthz
