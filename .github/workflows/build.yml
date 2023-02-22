@@ -28,7 +28,7 @@ jobs:
 
     - name: Test
       run: |
-        ./app
+        ./app &
         sleep 10
         curl -i http://127.0.0.1:8000/healthz
         kill -9 `lsof -i :8000 -t`
