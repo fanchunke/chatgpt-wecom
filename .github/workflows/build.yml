@@ -27,6 +27,4 @@ jobs:
       run: go build -ldflags "-s -w " -o app ./cmd/app
 
     - name: Test
-      env:
-        encoding_aes_key: FBpEcN6OFOmpCToGVZfTZvDLqk1m60O5flEUotOS2GP
       run: ./app
