@@ -13,8 +13,8 @@ import (
 )
 
 func main() {
-	conf := flag.String("conf", "conf/online.conf", "配置文件")
-	initEnt := flag.Bool("init-ent", false, "是否初始化数据库")
+	conf := flag.String("conf", "chatgpt.conf", "配置文件")
+	initEnt := flag.Bool("initdb", false, "是否初始化数据库")
 	flag.Parse()
 	cfg, err := config.New(*conf)
 	if err != nil {
