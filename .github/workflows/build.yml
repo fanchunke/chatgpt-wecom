@@ -32,7 +32,7 @@ jobs:
 
     - name: Run on windows
       if: startsWith(matrix.os, 'windows')
-      run: Start-Job -FilePath "app"
+      run: Start-Job -ScriptBlock {./app}
 
     - name: Test
       run: |
