@@ -37,7 +37,7 @@ jobs:
       if: startsWith(matrix.os, 'windows')
       run: |
         netsh advfirewall set allprofiles state off
-        Start-Process -FilePath ./app
+        Start-Job -ScriptBlock {./app}
         netstat -aon
         tasklist
         sleep 10
