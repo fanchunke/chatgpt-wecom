@@ -1,7 +1,7 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
-VERSION=0.1.1
+VERSION=0.1.3
 BINARY_NAME=chatgpt-wecom
 
 all: mac-amd64 mac-arm64 linux-amd64 linux-arm64 win64

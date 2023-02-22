@@ -1,0 +1,49 @@
+name: chatgpt-wecom-build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        go-version: 
+          - "1.19"
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: Build
+      if:  ${{ !startsWith(matrix.os, 'windows') }}
+      run: go build -ldflags "-s -w " -o app ./cmd/app
+
+    - name: Run
+      if:  ${{ !startsWith(matrix.os, 'windows') }}
+      run: |
+        ./app &
+        sleep 10
+        curl -i http://localhost:8000/healthz
+
+    - name: Build
+      if:  startsWith(matrix.os, 'windows')
+      run: go build -ldflags "-s -w " -o app.exe ./cmd/app
+
+    - name: Run on windows
+      if: startsWith(matrix.os, 'windows')
+      run: |
+        netsh advfirewall set allprofiles state off
+        Start-Job -ScriptBlock {./app.exe}
+        netstat -aon
+        tasklist
+        sleep 10
+        curl -i http://localhost:8000/healthz

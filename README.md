@@ -31,7 +31,7 @@
 * **选择1：Docker运行（sqlite3版，推荐）**
 
 ```shell
-git clone https://github.com/yijia2413/chatgpt-wecom.git
+git clone https://github.com/fanchunke/chatgpt-wecom.git
 cd chatgpt-wecom
 
 # 构建镜像
@@ -39,7 +39,7 @@ make dockerenv
 
 # 运行带sqlite的镜像，运行前确认chatgpt.conf修改完毕
 docker run -it -d --name chatgpt --restart=always \
-  -v $(pwd)/conf/chatgpt.conf:/home/works/program/chatgpt.conf \
+  -v $(pwd)/conf/chatgpt.conf:/home/works/program/conf/chatgpt.conf \
   -p 0.0.0.0:8000:8000 chatgpt-wecom:0.1.1
 ```
 
@@ -50,7 +50,7 @@ docker compose up -d
 ```
 
 * **选择3：本地运行**
-* 下载对应的二进制，[chatgpt-wecom](https://github.com/yijia2413/chatgpt-wecom/releases)
+* 下载对应的二进制，[chatgpt-wecom](https://github.com/fanchunke/chatgpt-wecom/releases)
 * 执行命令 `./chatgpt-wecom -conf=conf/chatgpt.conf` 即可，同理需要确认`chatgpt.conf`配置完毕
 
 ### 3. 配置企业微信
@@ -62,7 +62,7 @@ docker compose up -d
 
 **怎么创建数据库**
 
-- v0.1.1 版本中支持 sqlite3 数据库，只需要修改配置文件的配置，程序启动后便会初始化数据库和数据表，不需要额外的操作。
+- 新版本支持 sqlite3 数据库，只需要修改配置文件的配置，程序启动后便会初始化数据库和数据表，不需要额外的操作。
 
 - 如果使用的是 MySQL，则需要自行创建数据库，建库 SQL 可直接使用命令：[init.sql](/init.sql)，之后程序启动，便可以自动创建数据表。
 
@@ -74,7 +74,7 @@ docker compose up -d
 
 **数据库配置说明**
 
-v0.1.1 版本可以支持 MySQL、SQLite、PostgreSQL。常见的配置如下：
+新版本可以支持 MySQL、SQLite、PostgreSQL。常见的配置如下：
 
 MySQL:
 
@@ -100,6 +100,12 @@ dataSource="file:chatgpt?_fk=1&parseTime=True&loc=Local"
 
 ## Changelog
 
+### v0.1.3
+- 添加makefile，docker-compose自动build MySQL等 [#14](https://github.com/fanchunke/chatgpt-wecom/pull/14)
+
+### v0.1.2
+- 修复MySQL数据库迁移问题
+
 ### v0.1.1
 
 - 修复 prompt 过长导致接口调用失败问题
@@ -112,5 +118,5 @@ dataSource="file:chatgpt?_fk=1&parseTime=True&loc=Local"
 
 - 项目初始化
 
-### Happy Chatting
-![img](/png/example.jpg)
+## Happy Chatting
+![img](assets/example.jpg)
