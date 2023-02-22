@@ -30,4 +30,4 @@ jobs:
       run: ./app &
 
     - name: Test
-      run: curl -i http://127.0.0.1:8000/healthz
+      run: curl -i http://localhost:8000/healthz
