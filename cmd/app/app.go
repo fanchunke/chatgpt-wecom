@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	conf := flag.String("conf", "chatgpt.conf", "配置文件")
+	conf := flag.String("conf", "conf/chatgpt.conf", "配置文件")
 	initEnt := flag.Bool("initdb", false, "是否初始化数据库")
 	flag.Parse()
 	cfg, err := config.New(*conf)

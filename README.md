@@ -39,7 +39,7 @@ make dockerenv
 
 # 运行带sqlite的镜像，运行前确认chatgpt.conf修改完毕
 docker run -it -d --name chatgpt --restart=always \
-  -v $(pwd)/conf/chatgpt.conf:/home/works/program/chatgpt.conf \
+  -v $(pwd)/conf/chatgpt.conf:/home/works/program/conf/chatgpt.conf \
   -p 0.0.0.0:8000:8000 chatgpt-wecom:0.1.1
 ```
 
