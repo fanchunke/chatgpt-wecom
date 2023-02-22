@@ -28,13 +28,14 @@ jobs:
 
     - name: Run
       if:  ${{ !startsWith(matrix.os, 'windows') }}
-      run: ./app &
+      run: |
+        ./app &
+        sleep 10
+        curl -i http://localhost:8000/healthz
 
     - name: Run on windows
       if: startsWith(matrix.os, 'windows')
-      run: Start-Job -ScriptBlock {./app}
-
-    - name: Test
       run: |
+        Start-Job -ScriptBlock {./app}
         sleep 10
         curl -i http://localhost:8000/healthz
