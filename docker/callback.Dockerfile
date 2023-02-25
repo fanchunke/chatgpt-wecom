@@ -16,10 +16,10 @@ ENV GO111MODULE=on \
 COPY --from=base /go/pkg /go/pkg
 RUN sed -i "s@http://deb.debian.org@http://mirrors.aliyun.com@g" /etc/apt/sources.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends gcc-x86-64-linux-gnu libc6-dev-amd64-cross
+    && apt-get install -y --no-install-recommends bsdmainutils gcc gcc-multilib
 COPY . /app
 WORKDIR /app
-RUN CC=x86_64-linux-gnu-gcc go build -ldflags '-linkmode external -extldflags "-static"' -o /bin/chatgpt-wecom ./cmd/app
+RUN go build -ldflags '-linkmode external -extldflags "-static"' -o /bin/chatgpt-wecom ./cmd/app
 
 # Step 3: Final
 FROM alpine:latest
