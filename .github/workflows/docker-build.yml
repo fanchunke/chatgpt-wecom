@@ -23,6 +23,7 @@ jobs:
       -
         name: Build
         uses: docker/build-push-action@v4
+        run: go env
         with:
           context: .
           file: ./docker/callback.Dockerfile
