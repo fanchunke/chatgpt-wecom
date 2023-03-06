@@ -21,8 +21,8 @@ RUN go build -ldflags '-linkmode external -extldflags "-static"' -o /bin/chatgpt
 # Step 3: Final
 FROM alpine:latest
 WORKDIR /home/works/program
-COPY ./conf/chatgpt.conf ./chatgpt.conf
+COPY ./conf/chatgpt.conf ./conf/chatgpt.conf
 COPY --from=builder /bin/chatgpt-wecom .
 
 EXPOSE 8000
-CMD ["./chatgpt-wecom", "-conf=chatgpt.conf"]
+CMD ["./chatgpt-wecom", "-conf=conf/chatgpt.conf"]
