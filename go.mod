@@ -3,7 +3,7 @@ module github.com/fanchunke/chatgpt-wecom
 go 1.19
 
 require (
-	github.com/fanchunke/xgpt3 v0.1.3
+	github.com/fanchunke/xgpt3 v0.1.4
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-resty/resty/v2 v2.7.0
@@ -11,7 +11,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/rs/xid v1.4.0
 	github.com/rs/zerolog v1.29.0
-	github.com/sashabaranov/go-gpt3 v1.1.0
+	github.com/sashabaranov/go-openai v1.4.1
 	github.com/spf13/viper v1.15.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )

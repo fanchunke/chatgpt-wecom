@@ -55,7 +55,9 @@ docker compose up -d
 
 ### 3. 配置企业微信
 
-* URL 配置格式：`http://ip:port/wecom/receive`
+* URL 配置格式
+  - text-davinci-003 版本：`http://ip:port/wecom/receive`
+  - gpt-3.5-turbo 版本：`http://ip:port/wecom/receive/v2`
 * 在企业微信后台，添加可信IP地址
 
 ## FAQ
@@ -99,6 +101,9 @@ dataSource="file:chatgpt?_fk=1&parseTime=True&loc=Local"
 - loc=Local: 以本地时间存储时间类型的字段
 
 ## Changelog
+
+### v0.1.4
+- 增加 `gpt-3.5-turbo` API 的支持
 
 ### v0.1.3
 - 添加makefile，docker-compose自动build MySQL等 [#14](https://github.com/fanchunke/chatgpt-wecom/pull/14)
