@@ -11,20 +11,29 @@ import (
 	"github.com/fanchunke/xgpt3"
 
 	"github.com/rs/zerolog/log"
-	gogpt "github.com/sashabaranov/go-gpt3"
+	openai "github.com/sashabaranov/go-openai"
+)
+
+type versionType string
+
+const (
+	callbackVersionV1 versionType = "v1"
+	callbackVersionV2 versionType = "v2"
 )
 
 type callbackHandler struct {
 	cfg         *config.Config
 	xgpt3Client *xgpt3.Client
 	wecomClient *wecom.WeComApp
+	version     versionType
 }
 
-func NewCallbackHandler(cfg *config.Config, xgpt3Client *xgpt3.Client, wecomClient *wecom.WeComApp) *callbackHandler {
+func NewCallbackHandler(cfg *config.Config, xgpt3Client *xgpt3.Client, wecomClient *wecom.WeComApp, version versionType) *callbackHandler {
 	return &callbackHandler{
 		cfg:         cfg,
 		xgpt3Client: xgpt3Client,
 		wecomClient: wecomClient,
+		version:     version,
 	}
 }
 
@@ -38,7 +47,14 @@ func (h *callbackHandler) OnIncomingMessage(ctx context.Context, msg *message.Rx
 
 		// 获取回复
 		if !closeSession {
-			reply, err = h.getGPTResponse(context.Background(), msg.AgentId, msg.FromUserName, content)
+			var handler func(ctx context.Context, agentId int64, userId string, content string) (string, error)
+			if h.version == callbackVersionV1 {
+				handler = h.getOpenAICompletion
+			} else {
+				handler = h.getOpenAIChatCompletion
+			}
+
+			reply, err = handler(context.Background(), msg.AgentId, msg.FromUserName, content)
 			if err != nil {
 				log.Error().Err(err).Msgf("Get GPT Response error: %v", err)
 				return err
@@ -71,10 +87,10 @@ func (h *callbackHandler) OnIncomingMessage(ctx context.Context, msg *message.Rx
 	return nil
 }
 
-func (h *callbackHandler) getGPTResponse(ctx context.Context, agentId int64, userId, content string) (string, error) {
+func (h *callbackHandler) getOpenAICompletion(ctx context.Context, agentId int64, userId, content string) (string, error) {
 	// 获取 GPT 回复
-	req := gogpt.CompletionRequest{
-		Model:           gogpt.GPT3TextDavinci003,
+	req := openai.CompletionRequest{
+		Model:           openai.GPT3TextDavinci003,
 		MaxTokens:       1500,
 		Prompt:          content,
 		TopP:            1,
@@ -114,4 +130,34 @@ func (h *callbackHandler) sendTextMessage(ctx context.Context, agentId int64, us
 	}
 
 	return nil
+}
+
+func (h *callbackHandler) getOpenAIChatCompletion(ctx context.Context, agentId int64, userId, content string) (string, error) {
+	// 获取 GPT 回复
+	req := openai.ChatCompletionRequest{
+		Model:     openai.GPT3Dot5Turbo,
+		MaxTokens: 1500,
+		Messages: []openai.ChatCompletionMessage{
+			{
+				Role:    openai.ChatMessageRoleUser,
+				Content: content,
+			},
+		},
+		TopP:            1,
+		Temperature:     0.9,
+		PresencePenalty: 0.6,
+		User:            userId,
+	}
+	resp, err := h.xgpt3Client.CreateChatCompletionWithChannel(ctx, req, fmt.Sprintf("%d", agentId))
+	if err != nil {
+		return "", fmt.Errorf("CreateCompletion failed: %w", err)
+	}
+
+	if len(resp.Choices) == 0 {
+		return "", fmt.Errorf("Empty GPT Choices")
+	}
+
+	// 发送回复给用户
+	reply := strings.TrimSpace(resp.Choices[0].Message.Content)
+	return reply, nil
 }

@@ -32,13 +32,23 @@ func NewRouter(cfg *config.Config, xgpt3Client *xgpt3.Client, wecomApp *wecom.We
 	r.Use(middleware.AccessHandler())
 	r.GET("/healthz", r.Healthz)
 
-	callback := NewCallbackHandler(cfg, xgpt3Client, wecomApp)
-	msgHandler, err := wecomApp.RxMessageHandler(callback)
+	callbackV1 := NewCallbackHandler(cfg, xgpt3Client, wecomApp, callbackVersionV1)
+	msgHandlerV1, err := wecomApp.RxMessageHandler(callbackV1)
 	if err != nil {
-		log.Error().Err(err).Msgf("Init RxMessageHandler failed: %s", err)
+		log.Error().Err(err).Msgf("Init RxMessageHandler V1 failed: %s", err)
 		return nil, err
 	}
-	r.GET("/wecom/receive", gin.WrapH(msgHandler))
-	r.POST("/wecom/receive", gin.WrapH(msgHandler))
+
+	callbackV2 := NewCallbackHandler(cfg, xgpt3Client, wecomApp, callbackVersionV2)
+	msgHandlerV2, err := wecomApp.RxMessageHandler(callbackV2)
+	if err != nil {
+		log.Error().Err(err).Msgf("Init RxMessageHandler V2 failed: %s", err)
+		return nil, err
+	}
+
+	r.GET("/wecom/receive", gin.WrapH(msgHandlerV1))
+	r.POST("/wecom/receive", gin.WrapH(msgHandlerV1))
+	r.GET("/wecom/receive/v2", gin.WrapH(msgHandlerV2))
+	r.POST("/wecom/receive/v2", gin.WrapH(msgHandlerV2))
 	return r, nil
 }

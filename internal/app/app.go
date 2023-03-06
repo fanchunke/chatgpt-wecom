@@ -15,14 +15,14 @@ import (
 	"github.com/fanchunke/xgpt3/conversation/ent/chatent"
 
 	"github.com/rs/zerolog/log"
-	gogpt "github.com/sashabaranov/go-gpt3"
+	"github.com/sashabaranov/go-openai"
 )
 
 func Run(cfg *config.Config) {
 	log.Info().Msgf("Config: %v", cfg)
 
 	// 初始化 gpt client
-	gptClient := gogpt.NewClient(cfg.GPT.ApiKey)
+	gptClient := openai.NewClient(cfg.GPT.ApiKey)
 
 	// 初始化数据库 client
 	dbConf := cfg.Database
