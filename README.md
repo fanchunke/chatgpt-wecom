@@ -102,6 +102,9 @@ dataSource="file:chatgpt?_fk=1&parseTime=True&loc=Local"
 
 ## Changelog
 
+### v0.1.5
+- 修复跨平台编译包问题
+
 ### v0.1.4
 - 增加 `gpt-3.5-turbo` API 的支持
 
