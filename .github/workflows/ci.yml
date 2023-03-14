@@ -1,4 +1,4 @@
-name: chatgpt-wecom-build
+name: chatgpt-wecom-ci
 
 on:
   push:
